@@ -1,0 +1,7 @@
+Sample Animal Intelligence
+1 Dog Smart
+2 Dog Smart
+3 Cat Dumb
+4 Cat Dumb
+5 Dog Dumb
+6 Cat Smart
