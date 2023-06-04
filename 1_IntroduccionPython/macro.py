@@ -1,13 +1,18 @@
 import matplotlib.pyplot as plt
 
-def graf_rectas(x, y0, y1, label0 = '$3x_0+2x_1=2$', label1='$2x_0+6x_1=-8$'):
+def graf_rectas(x, y0, y1, label0 = '$3x_0+2x_1=2$', label1='$2x_0+6x_1=-8$', aspect='equal'):
     plt.plot(x,y0,lw=3,c='seagreen',label = label0)
     plt.plot(x,y1,lw=3,c='mediumorchid',label = label1)
+    if aspect == 'equal':
+        plt.gca().set_aspect('equal')
+        plt.legend(ncol = 1, frameon=True, loc='best', bbox_to_anchor=(0.95, 1.0))
+    else:
+        plt.legend(ncol = 2, frameon=True)
+
     plt.xlabel('$x_0$')
     plt.ylabel('$x_1$')
     plt.title('Cruce de rectas')
     plt.grid(True)
-    plt.legend(ncol = 2, frameon=True)
 
 def graf_sol(sol):
     plt.scatter(sol[0], sol[1], fc='sandybrown', ec='k', s = 75, alpha=0.75, zorder=5, label='Solución')
@@ -47,3 +52,5 @@ def graf_error(d_error):
 
 def savefig(filename):
     plt.savefig(filename)
+    
+    
