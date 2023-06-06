@@ -1,0 +1,1079 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3.7 (tensorflow)",
+      "language": "python",
+      "name": "tensorflow"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.7.7"
+    },
+    "colab": {
+      "name": "01_SolucionEcuacionesNoLineales.ipynb",
+      "provenance": [],
+      "toc_visible": true,
+      "include_colab_link": true
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/jugernaut/Induccion_MeIA/blob/angel/4_IntroduccionAA/03_MetodoDeNewton\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mUjCEqICmjLt"
+      },
+      "source": [
+        "<font color=\"Teal\" face=\"Comic Sans MS,arial\">\n",
+        "  <h1 align=\"center\"><i>Ecuaciones no lineales</i></h1>\n",
+        "  </font>\n",
+        "  <font color=\"Black\" face=\"Comic Sans MS,arial\">\n",
+        "  <h5 align=\"center\"><i>Profesor: M.en.C. Miguel Angel Pérez León.</i></h5>\n",
+        "    <h5 align=\"center\"><i>Ayudante: Jesús Iván Coss Calderón.</i></h5>\n",
+        "  <h5 align=\"center\"><i>Materia: Análisis Numérico.</i></h5>\n",
+        "  </font>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "G_USq1PJmjLu"
+      },
+      "source": [
+        "## Introducción\n",
+        "\n",
+        "Las ecuaciones no lineales se presentan en muchos fenómenos de la ciencia y la sociedad, como lo son:\n",
+        "\n",
+        "* Economia.\n",
+        "* Demografía.\n",
+        "* Clima.\n",
+        "* Biología, entre otros.\n",
+        "\n",
+        "Una ecuación no lineal es toda aquella en la que cualquiera de las variables que forman parte de la ecuación no son de primer grado. Por tanto en este tipo de ecuaciones nos podemos encontrar polinomios de segundo grado, raíces, logaritmos, exponenciales, funciones trigonométricas, etc.\n",
+        "\n",
+        "Los métodos numéricos que se tratan en esta sección sirven para generar aproximaciones a las soluciones de este tipo de ecuaciones (no lineales), cuando no es posible obtener soluciones exactas o que es muy complicado encontrarlas con métodos algebraicos.\n",
+        "\n",
+        "El objetivo principal de este capítulo será aplicar algunos métodos numéricos para hallar raíces reales de ecuaciones no lineales de una variable, que satisfacen a una ecuación del tipo: $f(x)=0$\n",
+        "\n",
+        "• Los valores que hacen que una función $f(x)=0$ , se conocen con el nombre de raíces o ceros de $f$.\n",
+        "\n",
+        "• Se analizarán los siguientes métodos, por medio de los cuales se obtendrá un valor $x_{n}$ tal que:\n",
+        "\n",
+        "$$ x_{n} \\approx x \\hspace{2mm}\\left( x_{n} \\hspace{1mm} \\text{es la aproximación en la iteración n} \\right) $$\n",
+        "\n",
+        "$$ f(x_{n}) \\approx 0 \\hspace{2mm} \\left( f(x_{n}) \\hspace{1mm} \\text{es el valor de f evaluado en} \\hspace{1mm} x_{n} \\right)$$"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "tp69gyUWm7eU"
+      },
+      "source": [
+        "## Categorías de métodos\n",
+        "\n",
+        "Los métodos para encontrar solución a ecuaciones no lineales los podemos clasificar en 2 categorías.\n",
+        "\n",
+        "\n",
+        "*   **Métodos cerrados**: requieren dos valores iniciales $x_{0}$ y $x_{1}$, que deben encerrar a la raíz.\n",
+        "\n",
+        "    *   Método de la bisección.\n",
+        "\n",
+        "    *  Método de la falsa posición.\n",
+        "\n",
+        "\n",
+        "* **Métodos abiertos**: requieren un sólo valor de inicio $x_{0}$ o dos de ellos $x_{0}$ y $x_{1}$ , pero que no necesariamente deben encerrar a la raíz.\n",
+        "\n",
+        "    * Método de la secante.\n",
+        "\n",
+        "    * Método de Newton.\n",
+        "    \n",
+        "    \n",
+        "Los métodos numéricos se basan en **iteraciones que generan sucesiones**, lo que significa que dado una aproximación inicial $x_{0}$ se emplea esta para encontrar el siguiente valor de $x_{1}$ de tal manera que para encontrar el valor de la solución final $x_{n}$ es necesario emplear $x_{n-1}$ para calcular dicho valor.\n",
+        "\n",
+        "Cabe mencionar que no existe un método universal para encontrar solución a ecuaciones no lineales. Algunos de ellos funcionarán sobre ciertos critérios y no servirán para resolver todo tipo de ecuación. Los métodos que presenten un buen comportamiento sobre alguna ecuación pueden no ser los mejores para resolver otro tipo de ecuaciones.\n",
+        "\n",
+        "De cada uno de los métodos vistos en esta sección (y de todos los métodos numéricos en general), es importante conocer sus ventajas y desventajas, así como su **complejidad computacional, crecimiento del error y rapidez de convergencia**.\n",
+        "\n",
+        "Ya se que se tenga una idea de las cualidades específicas de cada método, es más sencillo determinar cual de ellos aplicar y bajo que circunstancias."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "FfQIZfj1mjLv"
+      },
+      "source": [
+        "## Método de la bisección\n",
+        "\n",
+        "El problema de encontrar una aproximación a la raíz de una ecuación data del año 1700 a.c. Una tabla cuneiforme encontrada en Babilonia muestra el número sexagesimal (base 60) equivalente a 1.414222 como aproximación de $\\sqrt{2}$, resultado con una precisión de $10^{-5}$. Esta aproximación se puede encontrar empleando el algoritmo visto al inicio del curso.\n",
+        "\n",
+        "El primer método numérico que analizaremos y que se basa en el teorema del valor medio, se conoce como el método de la bisección o búsqueda binaria."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "pSF5TTj5oslA"
+      },
+      "source": [
+        "### Teorema del valor Intermedio\n",
+        "\n",
+        "Sea $f$ una función continua en un intervalo $[a,b]$. Entonces para cada $u$ tal que $f(a) < u < f(b) $ , existe al menos un $c \\in ( a, b) $ tal que $f(c)=u$.\n",
+        "\n",
+        "El teorea de valor intermdio, origina un resultado que nos ayudará a entender el método de la bisección, el resultado es el siguiente."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "AhmbKxf-o4Uo"
+      },
+      "source": [
+        "### Teorema de Bolzano\n",
+        "\n",
+        "Sea $f$ una función continua en un intervalo $[a,b]$ con $f(a)$ y $ f(b) $  de signos contrarios, es decir, $f(a)*f(b)<0 $ . Entonces existe al menos un $c \\in ( a, b) $ tal que $f(c)=0$."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "_bNiTtmDpBlK"
+      },
+      "source": [
+        "### Descripción del método\n",
+        "\n",
+        "* Para simplificar, asumimos que $[a,b]$ contiene exactamente una raíz $x$, (aunque el método también se puede aplicar cuando hay mas de una raíz en $[a,b]$; pero cuando esto sucede no se garantiza que el método sea convergente a la solución buscada. \n",
+        "\n",
+        "* El método consiste en dividir sucesivamente el intervalo $[a,b]$ por la mitad y evaluar ese punto para saber si se tiene una raíz o en su defecto hasta que la longitud del intervalo tienda a cero.\n",
+        "\n",
+        "* Un prerequisito para garantizar la convergencia de este método es garantizar que $f$ es continua en $[a,b]$ y que en este intervalo se encuentra exactamente una raíz; si se cumplen ambos se garantiza convergencia, pero no significa que si uno de ellos no se cumple, el método vaya sea divergente.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "dNcGXm5UojTZ"
+      },
+      "source": [
+        "### Algoritmo\n",
+        "\n",
+        "1. Se calcula la primera iteración $(n=1)$ el punto medio del intervalo, que sera la primera aproximación de la raíz, este valor esta dado por:\n",
+        "\n",
+        "$$x_{1}=a+\\frac{b-a}{2}=\\frac{2a+b-a}{2}=\\frac{a+b}{2}$$\n",
+        "\n",
+        "* Para obtener el n-esimo punto medio, la ecuación seria:\n",
+        "\n",
+        "$$x_{n}=\\frac{a_{n-1}+b_{n-1}}{2} \\tag{1}$$\n",
+        "\n",
+        "A la ecuación (1) se le denomina método iterativo del punto medio, actualizando iterativamente los valores de $a$ y $b$.\n",
+        "\n",
+        "2. Se verifican los signos de $f(a)*f(x_{n})$ y $f(x_{n})*f(b)$, para saber en que subintervalo se encuentra la raíz:\n",
+        "\n",
+        "    *  Si $f(a)*f(x_{n})<0$, entonces en el subintervalo $[a,x_{n}]$ se encuentra la raíz, renombrando $a=a$ y $b=x_{n}$.\n",
+        "\n",
+        "    * Si $f(a)*f(x_{n})>0$, entonces en el subintervalo $[x_{n},b]$ se encuentra la raíz, renombrando $a=x_{n}$ y $b=b$.\n",
+        "    * Si $f(a)*f(x_{n})=0$, entonces $x_{n}$ es la raíz. Debido a los errores de redondeo, es poco probable que $f(x_{n})=0$ , por lo que se deben de utilizar otros criterios para saber cuando detener el algoritmo.\n",
+        "    \n",
+        "**Tolerancia**\n",
+        "\n",
+        "Si ocurre alguno de los dos primeros casos $(f(a)*f(x_{n})<0$,$ \\hspace{1mm} f(a)*f(x_{n})>0 )$ se calcula para la segunda iteración el punto medio del nuevo intervalo mediante la ecuación (1), siendo esta la aproximación mas actualizada de la raíz.\n",
+        "\n",
+        "Se repite el proceso hasta que se cumplan los siguientes criterios de convergencia.\n",
+        "\n",
+        "$$ \\left|x_{n}-x_{n-1}\\right|\\leq Tol \\tag{2} $$\n",
+        "\n",
+        "$$ \\left|f(x_{n})\\right|\\leq Tol \\tag{3} $$\n",
+        "\n",
+        "$$ N<n \\tag{4} $$\n",
+        "\n",
+        "Donde Tol es alguna tolerancia definida $>0$ y $N$ es un número máximo de iteraciones.\n",
+        "\n",
+        "Se deben cumplir simultáneamente los criterios (2) y (3) para asegurar que se ha encontrado una aproximación de la raíz. En su defecto se debe cumplir el criterio (4) el cual indica que no se ha logrado la convergencia.\n",
+        "\n",
+        "**Pseudocódigo**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "L1OQNQObmjLw"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/algbic.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "FlJk5wW_mjLx"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/esqbis.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "8zuMKOkGmjLy",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "b2e4de50-a767-4b8b-fe2e-84946c24e70c"
+      },
+      "source": [
+        "!git clone https://github.com/jugernaut/Numerico2021.git\n",
+        "import os\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "import Numerico2021.Utils.gutils as vis\n",
+        "%matplotlib inline\n",
+        "\n",
+        "'''Esta funcion implementa el metodo de la biseccion\n",
+        "para encontrar la raiz de una funcion.\n",
+        "f:   funcion de la cual se busca la raiz\n",
+        "Tol: tolerancia del error numerico\n",
+        "N:   numero maximo de iteraciones\n",
+        "a:   limite inferior del rango inicial\n",
+        "b:   limite superior del rango inicial\n",
+        "'''\n",
+        "def biseccion(f,Tol,N,a,b):\n",
+        "    fa, fb = f(a), f(b)\n",
+        "    #no hay un cambio de signo (teorema del valor medio)\n",
+        "    #no existe raiz en el intervalo [a,b]\n",
+        "    if fa*fb>0:\n",
+        "        print (\"no hay raiz en [a,b]\")\n",
+        "        return\n",
+        "    #contador de iteraciones    \n",
+        "    n=1\n",
+        "    x0=0.0\n",
+        "    #mientras no se exceda el numero de iteraciones\n",
+        "    while n<=N:\n",
+        "        #se busca la raiz en el punto medio\n",
+        "        x1=(a+b)/2.0\n",
+        "        fx=f(x1)\n",
+        "        #en caso de que la iteracion siguiente y la diferencia\n",
+        "        #entre la iteracion anterior no excedan Tol, entonces\n",
+        "        #la iteracion actual se aproxima a la solucion buscada\n",
+        "        if abs(f(x1)) <= Tol and abs(x1-x0) <= Tol:\n",
+        "            return x1\n",
+        "        #en caso de no cumplir el criterio de tolerancia\n",
+        "        #se actualiza el rango de busqueda\n",
+        "        if (fa*fx <0.0):\n",
+        "            b=x1 \n",
+        "        if (fx*fa >0.0):      \n",
+        "            a=x1\n",
+        "        x0=x1\n",
+        "        #se incrementa el contador de iteraciones\n",
+        "        n=n+1\n",
+        "\n",
+        "def f(x):\n",
+        "  return (x**2)-1\n",
+        "\n",
+        "raiz = biseccion(f,0.001,1000,-0.5,2)\n",
+        "print(\"La raíz con el método de la bisección es:\", raiz)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "fatal: destination path 'Numerico2021' already exists and is not an empty directory.\n",
+            "La raíz con el método de la bisección es: 0.9996337890625\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "wj9BDjNR6ZU4"
+      },
+      "source": [
+        "En el siguiente interactivo se muestra la gráfica correspondiente a $f(x)$, si quieres ver el codigo de esta gráfica da click [aquí](https://colab.research.google.com/github/jugernaut/Numerico2021/blob/master/02_EcuacionesNoLineales/Biseccion_interactive.ipynb)."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "DUeRg-teySPV",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 386
+        },
+        "outputId": "dd99e68a-3bc0-4777-ec92-522b0b7ab830"
+      },
+      "source": [
+        "# LINUX y MACOS\n",
+        "#%run \"./Biseccion_interactive.ipynb\"\n",
+        "\n",
+        "# WINDOWS\n",
+        "#%run \"/content/Numerico2021/02_EcuacionesNoLineales/Biseccion_interactive.ipynb\"\n",
+        "\n",
+        "# Google Coolab\n",
+        "%run \"/content/Numerico2021/02_EcuacionesNoLineales/Biseccion_interactive.ipynb\""
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "fatal: destination path 'Numerico2021' already exists and is not an empty directory.\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 720x360 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "tAwOJsrjmjL3"
+      },
+      "source": [
+        "### Análisis de Convergencia\n",
+        "\n",
+        "**Teorema:**\n",
+        "\n",
+        "Si $f$ es una función continua definida en el intervalo $[a,b]$, y se satisface $f(a)*f(b)<0$. El método de bisección genera una sucesión $\\left\\{ x_{n}\\right\\} _{n=1}^{\\infty}$ que aproxima una raíz $x$ de $f$, tal que:  \n",
+        "$$\\left|x-x_{n}\\right|\\leq\\frac{b-a}{2^{n}}\\leq Tol,\\quad para\\,n \\geq 1 $$\n",
+        "\n",
+        "*Demostración:*\n",
+        "\n",
+        " Para cada $n \\geq 1$, tenemos \n",
+        " \n",
+        " $$b_{n}-a_{n}=\\frac{1}{2^{n-1}}(b-a)\\quad y\\quad x\\in(a_{n},b_{n})$$.\n",
+        " \n",
+        " Y como $x_{n}=\\frac{1}{2}(a_{n}+b_{n})$ para toda $n \\geq 1$, se deduce que\n",
+        " \n",
+        " $$\\left|x-x_{n}\\right|\\leq\\frac{1}{2}(b_{n}-a_{n})=\\frac{1}{2}\\left(\\frac{1}{2^{n-1}}(b-a)\\right)=\\frac{b-a}{2^{n}}$$\n",
+        " \n",
+        "Por lo tanto\n",
+        "\n",
+        "$$\\left|x-x_{n}\\right|\\leq\\frac{b-a}{2^{n}} $$\n",
+        "\n",
+        "Por otro lado, queremos que la distancia entre $x$ y $x_n$ sea menor o igual que la Tolerancia. Pero ya vimos que esa distancia esta acotada por $\\frac{b-a}{2^{n}}$, de tal forma que\n",
+        "\n",
+        "$$ \\frac{b-a}{2^{n}} \\leq Tol$$\n",
+        "\n",
+        "$$\\therefore \\left|x-x_{n}\\right|\\leq\\frac{b-a}{2^{n}}\\leq Tol,\\quad para\\,n \\geq 1 $$\n",
+        " \n",
+        "**¿Cuantas iteraciones?**.\n",
+        "\n",
+        "Para conocer cuantas iteraciones son necesarias considerando que *Tol* ya fue preestablecido, basta con resolver la desigualdad para $n$ del teorema anterior. Lo que nos da como resultado.\n",
+        "\n",
+        "$$\\Longrightarrow \\frac{b-a}{2^{n}} \\leq Tol$$\n",
+        "\n",
+        "$$ b-a \\leq 2^{n}Tol $$\n",
+        "\n",
+        "$$ \\frac{b-a}{Tol} \\leq 2^{n} $$\n",
+        "\n",
+        "$$ log\\left(\\frac{b-a}{Tol}\\right) \\leq \\log2^{n}$$\n",
+        "\n",
+        "$$ log\\left(\\frac{b-a}{Tol}\\right) \\leq n\\log2 $$\n",
+        "\n",
+        "$$ \\frac{\\log\\left(\\frac{b-a}{Tol}\\right)}{\\log2} \\leq n $$\n",
+        "\n",
+        "$$ \\therefore N > \\frac{\\log\\left(\\frac{b-a}{Tol}\\right)}{\\log2}$$\n",
+        "\n",
+        "Es importante recalcar que a pesar de que este resultado nos da una idea de la cota para el número de iteraciones ($N$), en realidad se tienen que realizar más iteraciones, debido a que para que el algoritmo termine es necesario cumplir ambos criterios señalados previamente.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "007r1RIlXM-G"
+      },
+      "source": [
+        "### Análisis de Complejidad\n",
+        "\n",
+        "Por otro lado podemos notar que $n$ es el número mínimo de iteraciones que requiere este algoritmo, en otras palabras, $n$ es el número de operaciones que requiere este algoritmo para lograr la convergencia a la raíz buscada.\n",
+        "\n",
+        "$$n \\geq \\frac{\\log\\left(\\frac{b-a}{Tol}\\right)}{\\log2}$$\n",
+        "\n",
+        "$$\\Longrightarrow \\frac{\\log\\left(\\frac{b-a}{Tol}\\right)}{\\log2} = \\log_{2}(\\frac{b-a}{Tol})$$\n",
+        "\n",
+        "$$ \\therefore n \\geq \\log_{2}(\\frac{b-a}{Tol})$$\n",
+        "\n",
+        "De tal manera que $\\log_{2}(\\frac{b-a}{Tol})$ es la cota inferior para el número de operaciones que requiere este algoritmo. Este valor nos da una idea cuál función podría acotar superiormente el número de operaciones de este algoritmo.\n",
+        "\n",
+        "Además se puede notar que este algoritmo funciona de manera similar al algoritmo conocido como **búsqueda binaria**, mismo que pertenece al orden logarítmico, es decir  $T(n) \\in O(log\\,n)$ donde $T(n)$ es el número de operaciones que le toma al algoritmo búsqueda binaria encontrar un valor en términos de $n$\n",
+        "\n",
+        "Así que todo indica que el método de la bisección también pertenece a $O(log\\,n)$, sin embargo, para ser formales hace falta demostrarlo."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "kjULtyv8FOWM"
+      },
+      "source": [
+        "### Ventajas y Desventajas\n",
+        "\n",
+        "**Ventajas**.\n",
+        "\n",
+        "* Encuentra una raíz aún cuando la función no sea analítica.\n",
+        "\n",
+        "* Si existe una raíz, este método siempre converge.\n",
+        "\n",
+        "* Es de los métodos mas sencillos de programar.\n",
+        "\n",
+        "**Desventajas**.\n",
+        "\n",
+        "* Su convergencia es muy lenta comparada con la convergencia de otros métodos, por lo que se sugiere escoger un intervalo inicial $[a,b]$, tan pequeño como sea posible.\n",
+        "\n",
+        "* Es mandatario, encontrar un intervalo donde exista al menos una raíz."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "dQrq-VVomjL4"
+      },
+      "source": [
+        "## Método de la falsa posición\n",
+        "\n",
+        "El método de la falsa posición debe su nombre a que búsca una raíz de la funcion $f(x)$ a partir de una falsa posición.\n",
+        "\n",
+        "Esta **falsa posición** viene de encontrar una recta secante de $f(x)$ y calcular la intersección de esta recta con el eje de las $x$ para así suponer que en esa intersección (falsa posición) se encuentra la raíz."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "8mFQwD4uuSq9"
+      },
+      "source": [
+        "### Descripción del método\n",
+        "\n",
+        "* Comienza con un intervalo $[a,b]$, que encierra a la raíz, es decir $f(a)$ y $f(b)$ son de signos opuestos, (teorema del valor medio).\n",
+        "\n",
+        "* Es similar al método de bisección ya que consiste en generar subintervalos que encierren a la raíz; pero la aproximación de la raíz $x_{n}$ no se obtiene con el punto medio, sino con la intersección de la recta secante a la curva que une a los puntos $(a,f(a))$ y $(b,f(b))$, con el eje $x$; proporcionando una mejor estimación de la raíz.\n",
+        "\n",
+        "* El reemplazamiento de la curva por una línea recta da una \"falsa posición\" de la raíz, de aquí el nombre del método.\n",
+        "\n",
+        "* Se repite este proceso substituyendo uno de los extremos del intervalo por el valor de la nueva iteración y de la función evaluada en ese punto, es decir $(x_{n},f(x_{n}))$."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "-9htmsgNoaRQ"
+      },
+      "source": [
+        "### Algoritmo\n",
+        "\n",
+        "El primer paso para aplicar el método de la falsa posición y garantizar que sea converjente a la solución, es comprobar que $f$ es continua en el intervalo $[a,b]$, y que en éste intervalo se encuentre una raíz $f(a)*f(b)<0$, si se cumplen estos dos requisitos se garantiza la convergencia del método.\n",
+        "\n",
+        "*Repaso de Kinder*\n",
+        "\n",
+        "Dado que ambos puntos $(a,f(a))$ y $(b,f(b))$ pertenecen a la misma recta, ambos deben tener la misma pendiente. Así, la ecuación de la recta que pasa por los puntos $(a,f(a))$ y $(b,f(b))$ esta dada por \n",
+        "\n",
+        "$$ m=\\frac{f(b)-f(a)}{b-a}\t\\quad y \\quad\tm=\\frac{f(x)-f(a)}{x-a}$$\n",
+        "\n",
+        "$$ \\frac{f(b)-f(a)}{b-a}\t=\t\\frac{f(x)-f(a)}{x-a}$$\n",
+        "\n",
+        "A continuación, se calcula la intersección con el eje $x$ (el valor $f(x)$ se iguala a cero) de la recta secante a la curva que pasa por los puntos $(a,f(a))$  y $(b,f(b))$ , que será la primera aproximación de la raíz. Este valor esta dado por:\n",
+        "\n",
+        "$$ (x-a)(f(b)-f(a)) = (b-a)(-f(a))$$\n",
+        "\n",
+        "$$xf(b)-xf(a)-af(b)+af(a) = -bf(a)+af(a)$$\n",
+        "\n",
+        "$$ xf(b)-xf(a)-af(b) = -bf(a)$$\n",
+        "\n",
+        "$$ x(f(b)-f(a)) = af(b)-bf(a) $$\n",
+        "\n",
+        "$$ x = \\frac{af(b)-bf(a)}{f(b)-f(a)} $$\n",
+        "\n",
+        "*Método iterativo de la falsa posición*\n",
+        "\n",
+        "$$ x_{n}=\\frac{a_{n-1}f(b_{n-1})-b_{n-1}f(a_{n-1})}{f(b_{n-1})-f(a_{n-1})} \\tag{5} $$ \n",
+        "\n",
+        "* A continuación se verifican los signos de $f(a)*f(x_{n})$  y $f(x_{n})*f(b)$ , para saber en que subintervalo se encuentra la raíz (como en el método de bisección):\n",
+        "\n",
+        "    * Si $f(a)*f(x_{n})<0$, entonces en el subintervalo $[a,x_{n}]$, se encuentra la raíz, renombrando $b=x_{n}$.\n",
+        "    \n",
+        "    * Si $f(a)*f(x_{n})>0$, entonces en el subintervalo $[x_{n},b]$ se encuentra la raíz, renombrando $a=x_{n}$.\n",
+        "\n",
+        "    * Si $f(a)*f(x_{n})=0$, entonces $x_{n}$ es la raíz. \n",
+        "\n",
+        "* Si ocurre alguno de los dos primeros casos se calcúla la intersección con el eje $x$ de la recta secante a la curva con la ecuación (5), siendo ésta la aproximación más actualizada de la raíz.\n",
+        "\n",
+        "* Al igual que en el método de bisección se repite el proceso hasta que se cumplan los criterios de convergencia de las ecuaciones (2), (3) y (4)\n",
+        "\n",
+        "**Pseudocódigo**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "tN8BfuapmjL4"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/algFalsa.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "fRY1h4jQmjL5"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/esqFalsa.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "pmbYbkT4mjL6",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "e77ccd43-741a-4666-c729-d3bbb711847f"
+      },
+      "source": [
+        "'''Esta funcion implementa el metodo de la falsa posicion\n",
+        "para encontrar la raiz de una funcion.\n",
+        "f:   funcion de la cual se busca la raiz\n",
+        "Tol: tolerancia del error numerico\n",
+        "N:   numero maximo de iteraciones\n",
+        "a:   limite inferior del rango inicial\n",
+        "b:   limite superior del rango inicial\n",
+        "'''\n",
+        "def falsaPosicion(f,Tol,N,a,b):\n",
+        "    fa=f(a)\n",
+        "    fb=f(b)\n",
+        "    #en caso de que no haya cambio de signo, no existe raiz\n",
+        "    if fa*fb>0:\n",
+        "        print(\"No existe raíz en [a,b]\")\n",
+        "        return\n",
+        "    #contador de iteraciones\n",
+        "    n=1\n",
+        "    #se toma una raiz inicial arbitraria   \n",
+        "    x0=0.0\n",
+        "    #mientras no se exceda el numero de iteraciones\n",
+        "    while n<=N:\n",
+        "        #se actualiza el rango de busqueda\n",
+        "        fa,fb =f(a),f(b)\n",
+        "        #se calcula la nueva iteracion\n",
+        "        x1= (a*fb-b*fa)/(fb-fa)\n",
+        "        fx=f(x1)\n",
+        "        #en caso de que la diferencia entre la iteracion actual\n",
+        "        #y la iteracion anterior no excedan Tol, y que la raiz\n",
+        "        #evaluada no exceda la tolerancia, se devuelve la raiz\n",
+        "        if abs(f(x1)) <= Tol and abs(x1-x0) <= Tol:\n",
+        "            return x1\n",
+        "        #en caso de no cumplir el criterio de tolerancia\n",
+        "        #se actualiza el rango de busqueda\n",
+        "        if (fa*fx <0.0):\n",
+        "            b=x1 \n",
+        "        if (fx*fa >0.0):      \n",
+        "            a=x1\n",
+        "        #se actualiza x0\n",
+        "        x0=x1\n",
+        "        #se incrementa el contador de iteraciones\n",
+        "        n=n+1\n",
+        "\n",
+        "raiz = falsaPosicion(f,0.001,1000,-0.5,2)\n",
+        "print(\"La raíz con el método de la falsa posición es:\", raiz)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "La raíz con el método de la falsa posición es: 0.9996952148735141\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "OxN0_jvwL0ns",
+        "colab": {
+          "resources": {
+            "http://localhost:8080/nbextensions/google.colab/files.js": {
+              "data": "Ly8gQ29weXJpZ2h0IDIwMTcgR29vZ2xlIExMQwovLwovLyBMaWNlbnNlZCB1bmRlciB0aGUgQXBhY2hlIExpY2Vuc2UsIFZlcnNpb24gMi4wICh0aGUgIkxpY2Vuc2UiKTsKLy8geW91IG1heSBub3QgdXNlIHRoaXMgZmlsZSBleGNlcHQgaW4gY29tcGxpYW5jZSB3aXRoIHRoZSBMaWNlbnNlLgovLyBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKLy8KLy8gICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKLy8KLy8gVW5sZXNzIHJlcXVpcmVkIGJ5IGFwcGxpY2FibGUgbGF3IG9yIGFncmVlZCB0byBpbiB3cml0aW5nLCBzb2Z0d2FyZQovLyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAovLyBXSVRIT1VUIFdBUlJBTlRJRVMgT1IgQ09ORElUSU9OUyBPRiBBTlkgS0lORCwgZWl0aGVyIGV4cHJlc3Mgb3IgaW1wbGllZC4KLy8gU2VlIHRoZSBMaWNlbnNlIGZvciB0aGUgc3BlY2lmaWMgbGFuZ3VhZ2UgZ292ZXJuaW5nIHBlcm1pc3Npb25zIGFuZAovLyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCi8qKgogKiBAZmlsZW92ZXJ2aWV3IEhlbHBlcnMgZm9yIGdvb2dsZS5jb2xhYiBQeXRob24gbW9kdWxlLgogKi8KKGZ1bmN0aW9uKHNjb3BlKSB7CmZ1bmN0aW9uIHNwYW4odGV4dCwgc3R5bGVBdHRyaWJ1dGVzID0ge30pIHsKICBjb25zdCBlbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogIGVsZW1lbnQudGV4dENvbnRlbnQgPSB0ZXh0OwogIGZvciAoY29uc3Qga2V5IG9mIE9iamVjdC5rZXlzKHN0eWxlQXR0cmlidXRlcykpIHsKICAgIGVsZW1lbnQuc3R5bGVba2V5XSA9IHN0eWxlQXR0cmlidXRlc1trZXldOwogIH0KICByZXR1cm4gZWxlbWVudDsKfQoKLy8gTWF4IG51bWJlciBvZiBieXRlcyB3aGljaCB3aWxsIGJlIHVwbG9hZGVkIGF0IGEgdGltZS4KY29uc3QgTUFYX1BBWUxPQURfU0laRSA9IDEwMCAqIDEwMjQ7CgpmdW5jdGlvbiBfdXBsb2FkRmlsZXMoaW5wdXRJZCwgb3V0cHV0SWQpIHsKICBjb25zdCBzdGVwcyA9IHVwbG9hZEZpbGVzU3RlcChpbnB1dElkLCBvdXRwdXRJZCk7CiAgY29uc3Qgb3V0cHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKG91dHB1dElkKTsKICAvLyBDYWNoZSBzdGVwcyBvbiB0aGUgb3V0cHV0RWxlbWVudCB0byBtYWtlIGl0IGF2YWlsYWJsZSBmb3IgdGhlIG5leHQgY2FsbAogIC8vIHRvIHVwbG9hZEZpbGVzQ29udGludWUgZnJvbSBQeXRob24uCiAgb3V0cHV0RWxlbWVudC5zdGVwcyA9IHN0ZXBzOwoKICByZXR1cm4gX3VwbG9hZEZpbGVzQ29udGludWUob3V0cHV0SWQpOwp9CgovLyBUaGlzIGlzIHJvdWdobHkgYW4gYXN5bmMgZ2VuZXJhdG9yIChub3Qgc3VwcG9ydGVkIGluIHRoZSBicm93c2VyIHlldCksCi8vIHdoZXJlIHRoZXJlIGFyZSBtdWx0aXBsZSBhc3luY2hyb25vdXMgc3RlcHMgYW5kIHRoZSBQeXRob24gc2lkZSBpcyBnb2luZwovLyB0byBwb2xsIGZvciBjb21wbGV0aW9uIG9mIGVhY2ggc3RlcC4KLy8gVGhpcyB1c2VzIGEgUHJvbWlzZSB0byBibG9jayB0aGUgcHl0aG9uIHNpZGUgb24gY29tcGxldGlvbiBvZiBlYWNoIHN0ZXAsCi8vIHRoZW4gcGFzc2VzIHRoZSByZXN1bHQgb2YgdGhlIHByZXZpb3VzIHN0ZXAgYXMgdGhlIGlucHV0IHRvIHRoZSBuZXh0IHN0ZXAuCmZ1bmN0aW9uIF91cGxvYWRGaWxlc0NvbnRpbnVlKG91dHB1dElkKSB7CiAgY29uc3Qgb3V0cHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKG91dHB1dElkKTsKICBjb25zdCBzdGVwcyA9IG91dHB1dEVsZW1lbnQuc3RlcHM7CgogIGNvbnN0IG5leHQgPSBzdGVwcy5uZXh0KG91dHB1dEVsZW1lbnQubGFzdFByb21pc2VWYWx1ZSk7CiAgcmV0dXJuIFByb21pc2UucmVzb2x2ZShuZXh0LnZhbHVlLnByb21pc2UpLnRoZW4oKHZhbHVlKSA9PiB7CiAgICAvLyBDYWNoZSB0aGUgbGFzdCBwcm9taXNlIHZhbHVlIHRvIG1ha2UgaXQgYXZhaWxhYmxlIHRvIHRoZSBuZXh0CiAgICAvLyBzdGVwIG9mIHRoZSBnZW5lcmF0b3IuCiAgICBvdXRwdXRFbGVtZW50Lmxhc3RQcm9taXNlVmFsdWUgPSB2YWx1ZTsKICAgIHJldHVybiBuZXh0LnZhbHVlLnJlc3BvbnNlOwogIH0pOwp9CgovKioKICogR2VuZXJhdG9yIGZ1bmN0aW9uIHdoaWNoIGlzIGNhbGxlZCBiZXR3ZWVuIGVhY2ggYXN5bmMgc3RlcCBvZiB0aGUgdXBsb2FkCiAqIHByb2Nlc3MuCiAqIEBwYXJhbSB7c3RyaW5nfSBpbnB1dElkIEVsZW1lbnQgSUQgb2YgdGhlIGlucHV0IGZpbGUgcGlja2VyIGVsZW1lbnQuCiAqIEBwYXJhbSB7c3RyaW5nfSBvdXRwdXRJZCBFbGVtZW50IElEIG9mIHRoZSBvdXRwdXQgZGlzcGxheS4KICogQHJldHVybiB7IUl0ZXJhYmxlPCFPYmplY3Q+fSBJdGVyYWJsZSBvZiBuZXh0IHN0ZXBzLgogKi8KZnVuY3Rpb24qIHVwbG9hZEZpbGVzU3RlcChpbnB1dElkLCBvdXRwdXRJZCkgewogIGNvbnN0IGlucHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKGlucHV0SWQpOwogIGlucHV0RWxlbWVudC5kaXNhYmxlZCA9IGZhbHNlOwoKICBjb25zdCBvdXRwdXRFbGVtZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQob3V0cHV0SWQpOwogIG91dHB1dEVsZW1lbnQuaW5uZXJIVE1MID0gJyc7CgogIGNvbnN0IHBpY2tlZFByb21pc2UgPSBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgaW5wdXRFbGVtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2NoYW5nZScsIChlKSA9PiB7CiAgICAgIHJlc29sdmUoZS50YXJnZXQuZmlsZXMpOwogICAgfSk7CiAgfSk7CgogIGNvbnN0IGNhbmNlbCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2J1dHRvbicpOwogIGlucHV0RWxlbWVudC5wYXJlbnRFbGVtZW50LmFwcGVuZENoaWxkKGNhbmNlbCk7CiAgY2FuY2VsLnRleHRDb250ZW50ID0gJ0NhbmNlbCB1cGxvYWQnOwogIGNvbnN0IGNhbmNlbFByb21pc2UgPSBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgY2FuY2VsLm9uY2xpY2sgPSAoKSA9PiB7CiAgICAgIHJlc29sdmUobnVsbCk7CiAgICB9OwogIH0pOwoKICAvLyBXYWl0IGZvciB0aGUgdXNlciB0byBwaWNrIHRoZSBmaWxlcy4KICBjb25zdCBmaWxlcyA9IHlpZWxkIHsKICAgIHByb21pc2U6IFByb21pc2UucmFjZShbcGlja2VkUHJvbWlzZSwgY2FuY2VsUHJvbWlzZV0pLAogICAgcmVzcG9uc2U6IHsKICAgICAgYWN0aW9uOiAnc3RhcnRpbmcnLAogICAgfQogIH07CgogIGNhbmNlbC5yZW1vdmUoKTsKCiAgLy8gRGlzYWJsZSB0aGUgaW5wdXQgZWxlbWVudCBzaW5jZSBmdXJ0aGVyIHBpY2tzIGFyZSBub3QgYWxsb3dlZC4KICBpbnB1dEVsZW1lbnQuZGlzYWJsZWQgPSB0cnVlOwoKICBpZiAoIWZpbGVzKSB7CiAgICByZXR1cm4gewogICAgICByZXNwb25zZTogewogICAgICAgIGFjdGlvbjogJ2NvbXBsZXRlJywKICAgICAgfQogICAgfTsKICB9CgogIGZvciAoY29uc3QgZmlsZSBvZiBmaWxlcykgewogICAgY29uc3QgbGkgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdsaScpOwogICAgbGkuYXBwZW5kKHNwYW4oZmlsZS5uYW1lLCB7Zm9udFdlaWdodDogJ2JvbGQnfSkpOwogICAgbGkuYXBwZW5kKHNwYW4oCiAgICAgICAgYCgke2ZpbGUudHlwZSB8fCAnbi9hJ30pIC0gJHtmaWxlLnNpemV9IGJ5dGVzLCBgICsKICAgICAgICBgbGFzdCBtb2RpZmllZDogJHsKICAgICAgICAgICAgZmlsZS5sYXN0TW9kaWZpZWREYXRlID8gZmlsZS5sYXN0TW9kaWZpZWREYXRlLnRvTG9jYWxlRGF0ZVN0cmluZygpIDoKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJ24vYSd9IC0gYCkpOwogICAgY29uc3QgcGVyY2VudCA9IHNwYW4oJzAlIGRvbmUnKTsKICAgIGxpLmFwcGVuZENoaWxkKHBlcmNlbnQpOwoKICAgIG91dHB1dEVsZW1lbnQuYXBwZW5kQ2hpbGQobGkpOwoKICAgIGNvbnN0IGZpbGVEYXRhUHJvbWlzZSA9IG5ldyBQcm9taXNlKChyZXNvbHZlKSA9PiB7CiAgICAgIGNvbnN0IHJlYWRlciA9IG5ldyBGaWxlUmVhZGVyKCk7CiAgICAgIHJlYWRlci5vbmxvYWQgPSAoZSkgPT4gewogICAgICAgIHJlc29sdmUoZS50YXJnZXQucmVzdWx0KTsKICAgICAgfTsKICAgICAgcmVhZGVyLnJlYWRBc0FycmF5QnVmZmVyKGZpbGUpOwogICAgfSk7CiAgICAvLyBXYWl0IGZvciB0aGUgZGF0YSB0byBiZSByZWFkeS4KICAgIGxldCBmaWxlRGF0YSA9IHlpZWxkIHsKICAgICAgcHJvbWlzZTogZmlsZURhdGFQcm9taXNlLAogICAgICByZXNwb25zZTogewogICAgICAgIGFjdGlvbjogJ2NvbnRpbnVlJywKICAgICAgfQogICAgfTsKCiAgICAvLyBVc2UgYSBjaHVua2VkIHNlbmRpbmcgdG8gYXZvaWQgbWVzc2FnZSBzaXplIGxpbWl0cy4gU2VlIGIvNjIxMTU2NjAuCiAgICBsZXQgcG9zaXRpb24gPSAwOwogICAgd2hpbGUgKHBvc2l0aW9uIDwgZmlsZURhdGEuYnl0ZUxlbmd0aCkgewogICAgICBjb25zdCBsZW5ndGggPSBNYXRoLm1pbihmaWxlRGF0YS5ieXRlTGVuZ3RoIC0gcG9zaXRpb24sIE1BWF9QQVlMT0FEX1NJWkUpOwogICAgICBjb25zdCBjaHVuayA9IG5ldyBVaW50OEFycmF5KGZpbGVEYXRhLCBwb3NpdGlvbiwgbGVuZ3RoKTsKICAgICAgcG9zaXRpb24gKz0gbGVuZ3RoOwoKICAgICAgY29uc3QgYmFzZTY0ID0gYnRvYShTdHJpbmcuZnJvbUNoYXJDb2RlLmFwcGx5KG51bGwsIGNodW5rKSk7CiAgICAgIHlpZWxkIHsKICAgICAgICByZXNwb25zZTogewogICAgICAgICAgYWN0aW9uOiAnYXBwZW5kJywKICAgICAgICAgIGZpbGU6IGZpbGUubmFtZSwKICAgICAgICAgIGRhdGE6IGJhc2U2NCwKICAgICAgICB9LAogICAgICB9OwogICAgICBwZXJjZW50LnRleHRDb250ZW50ID0KICAgICAgICAgIGAke01hdGgucm91bmQoKHBvc2l0aW9uIC8gZmlsZURhdGEuYnl0ZUxlbmd0aCkgKiAxMDApfSUgZG9uZWA7CiAgICB9CiAgfQoKICAvLyBBbGwgZG9uZS4KICB5aWVsZCB7CiAgICByZXNwb25zZTogewogICAgICBhY3Rpb246ICdjb21wbGV0ZScsCiAgICB9CiAgfTsKfQoKc2NvcGUuZ29vZ2xlID0gc2NvcGUuZ29vZ2xlIHx8IHt9OwpzY29wZS5nb29nbGUuY29sYWIgPSBzY29wZS5nb29nbGUuY29sYWIgfHwge307CnNjb3BlLmdvb2dsZS5jb2xhYi5fZmlsZXMgPSB7CiAgX3VwbG9hZEZpbGVzLAogIF91cGxvYWRGaWxlc0NvbnRpbnVlLAp9Owp9KShzZWxmKTsK",
+              "ok": true,
+              "headers": [
+                [
+                  "content-type",
+                  "application/javascript"
+                ]
+              ],
+              "status": 200,
+              "status_text": ""
+            }
+          },
+          "base_uri": "https://localhost:8080/",
+          "height": 408
+        },
+        "outputId": "2406905d-d2e3-4871-f17f-c9e5aa81ab7c"
+      },
+      "source": [
+        "# LINUX y MACOS\n",
+        "#%run \"./Biseccion_interactive.ipynb\"\n",
+        "\n",
+        "# WINDOWS\n",
+        "#%run \"/content/Numerico2021/02_EcuacionesNoLineales/Biseccion_interactive.ipynb\"\n",
+        "\n",
+        "# Google Coolab\n",
+        "%run \"/content/Numerico2021/02_EcuacionesNoLineales/FalsaPosicion_interactive.ipynb\""
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "fatal: destination path 'Numerico2021' already exists and is not an empty directory.\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 720x360 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "\n",
+              "     <input type=\"file\" id=\"files-2b687d9a-27f1-4b9c-8669-56e654dd168a\" name=\"files[]\" multiple disabled\n",
+              "        style=\"border:none\" />\n",
+              "     <output id=\"result-2b687d9a-27f1-4b9c-8669-56e654dd168a\">\n",
+              "      Upload widget is only available when the cell has been executed in the\n",
+              "      current browser session. Please rerun this cell to enable.\n",
+              "      </output>\n",
+              "      <script src=\"/nbextensions/google.colab/files.js\"></script> "
+            ],
+            "text/plain": [
+              "<IPython.core.display.HTML object>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7jT7faJZJndt"
+      },
+      "source": [
+        "### Ventajas y Desventajas\n",
+        "\n",
+        "**Ventajas**.\n",
+        "\n",
+        "* Si existe una raíz, este método siempre converge.\n",
+        "\n",
+        "* Se aproxima a la raiz más pronto que el método de la bisección.\n",
+        "\n",
+        "**Desventajas**.\n",
+        "\n",
+        "* Su convergencia es muy lenta comparada con la convergencia de otros métodos, por lo que se sugiere escoger un intervalo inicial $[a,b]$, tan pequeño como sea posible.\n",
+        "\n",
+        "* Es mandatario, encontrar un intervalo donde exista al menos una raíz."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "pcAvkL7emjL-"
+      },
+      "source": [
+        "## Método de la secante\n",
+        "\n",
+        "El método de la secante debe su nombre a que emplea una recta secante a $f(x)$ para dar una aproximación de la raíz."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ZBPOdYtXpBb_"
+      },
+      "source": [
+        "### **Descripción del método**\n",
+        "\n",
+        "*  El método de la secante es un paso previo al método de Newton, este método aproxima la derivada $f'(x_{n})$ mediante la recta secante. Este método es parecido al método de la falsa posición, ya que ambos comienzan con un intervalo y se basan en la formula de la interpolación lineal.\n",
+        "\n",
+        "\n",
+        "*  Al igual que el método de la falsa posición la aproximación a la raíz $x_{n}$, se obtiene con la intersección de la recta secante a la curva que une los puntos $(x_{0},f(x_{0}))$ y $(x_{1},f(x_{1}))$ con el eje $x$ y se denota $x_{2}$, siendo esta ultima una mejor aproximación de la raíz.\n",
+        "\n",
+        "\n",
+        "*  Este proceso se repite de tal manera que para encontrar la aproximación de la raíz $x_{n}$, se emplean las aproximaciones $x_{n-1}$ y $x_{n-2}$.\n",
+        "\n",
+        "\n",
+        "*  El algoritmo termina cuando se cumplen los criterios de convergencia (2), (3) y (4)."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "bvd2dvz6pE1v"
+      },
+      "source": [
+        "### Algoritmo\n",
+        "\n",
+        "Para poder encontrar la intersección de la recta secante con la curva que une los puntos $(x_{0},f(x_{0}))$ y $(x_{1},f(x_{1}))$, se emplea la siguiente igualdad trigonométrica, ya que la recta secante al intersectar el eje $x$ forma un ángulo $\\theta$ y por tanto un par de triángulos semejantes.\n",
+        "\n",
+        "$$\\cot\\theta=\\frac{cateto\\hspace{1mm} adyacente}{cateto \\hspace{1mm}opuesto}$$\n",
+        "\n",
+        "Posteriormente se substituyen los puntos antes mencionados en la identidad trigonométrica.\n",
+        "\n",
+        "$$\\cot\\theta=\\frac{x_{1}-x_{2}}{f(x_{1})} \\quad \\cot\\theta=\\frac{x_{1}-x_{0}}{f(x_{1})-f(x_{0})}$$\n",
+        "\n",
+        "El resto del desarrollo consiste en igualar ambas ecuaciones y despejar $x_{2}$, ya que es el valor buscado, $f(x_2)=0$ ya que esperamos que $x_2$ sea una raíz de $f(x)$.\n",
+        "\n",
+        "$$ \\Longrightarrow \\frac{x_{1}-x_{2}}{f(x_{1})}\t=\t\\frac{x_{1}-x_{0}}{f(x_{1})-f(x_{0})}$$\n",
+        "\n",
+        "$$x_{2}\t=\tx_{1}-f(x_{1})\\frac{x_{1}-x_{0}}{f(x_{1})-f(x_{0})}$$\n",
+        "\n",
+        "De manera que para obtener la n-esima intersección con el eje $x$ de la recta secante a la curva, la ecuación seria:\n",
+        "\n",
+        "$$ x_{n}=x_{n-1}-f(x_{n-1})\\frac{x_{n-1}-x_{n-2}}{f(x_{n-1})-f(x_{n-2})} \\tag{6}$$\n",
+        "\n",
+        "A la ecuación (6) se le conoce como el método iterativo del método de la secante.\n",
+        "\n",
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/desarrollo/Figuras/raicesNumericas/Secan.png?raw=1\" width=\"500\">\n",
+        "\n",
+        "**Pseudocódigo**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "FbKqtqUomjL_"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/algSec.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "rcvDSN4emjMA"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/esqSec.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sb1rODtKmjMB",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "e84de852-5b1d-47d8-8e51-ff267c8ca08e"
+      },
+      "source": [
+        "'''Esta funcion implementa el metodo de la secante\n",
+        "para encontrar la raiz de una funcion.\n",
+        "f:   funcion de la cual se busca la raiz\n",
+        "Tol: tolerancia del error numerico\n",
+        "N:   numero maximo de iteraciones\n",
+        "x0:  aproximacion inicial\n",
+        "x1: aproximacion siguiente\n",
+        "'''\n",
+        "def secante(f, Tol, N, x0, x1):\n",
+        "    #contador de iteraciones\n",
+        "    n = 1\n",
+        "    #mientras no se haya superado el limite de iteraciones\n",
+        "    while( N >= n ):\n",
+        "        #calculo de los valores de fx\n",
+        "        fx0,fx1=f(x0),f(x1)\n",
+        "        #se calcula la siguiente aproximacion\n",
+        "        xn = x1-fx1*((x1-x0)/float(fx1-fx0))\n",
+        "        #en caso de que se cumplan los criteros de paro\n",
+        "        #se devuelve la raiz\n",
+        "        if (abs(f(xn)) <= Tol and abs(x0-x1) <= Tol):\n",
+        "            return xn\n",
+        "        #se actualizan los valores    \n",
+        "        x0 = x1\n",
+        "        x1 = xn\n",
+        "        #incremento en las iteraciones\n",
+        "        n+=1\n",
+        "    raise Exception(\"Se alcanzo el maximo numero de iteraciones y no se encontro raiz\")\n",
+        "\n",
+        "raiz = secante(f,0.0001,10,-0.5,2)\n",
+        "print(\"La raíz con el método de la secante es:\", raiz)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "La raíz con el método de la secante es: 0.9999999999999999\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "UeMPtgf_mjME"
+      },
+      "source": [
+        "### Ventajas y Desventajas\n",
+        "\n",
+        "**Ventajas**\n",
+        "\n",
+        "* No hay que calcular la derivada de $f$.\n",
+        "\n",
+        "* La convergencia del método es superlineal, lo que significa que se aproxima a la raíz con un menor número de iteraciones, en comparación con los métodos previos.\n",
+        "\n",
+        "**Desventajas**\n",
+        "\n",
+        "* El método puede converger a una raíz no deseada o puede no converger del todo si la estimación inicial no es buena.\n",
+        "\n",
+        "* Si dos aproximaciones sucesivas están demasiado cercanas, entonces también $f(x_{n+1})$ y $f(x_{n})$ están muy cercanas, por lo que se presenta un error de redondeo significativo en la siguiente aproximación, debido al redondeo y a la cancelación numérica ya que se emplea la ecuación (6)."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "2u2PPQpOmjMF"
+      },
+      "source": [
+        "## Método de Newton\n",
+        "\n",
+        "El método de Newton hace uso de la definición de la derivada de $f(x)$ para encontrar la aproximación a la raíz de la función.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "u0E4479gQ64X"
+      },
+      "source": [
+        "### Descripción del método\n",
+        "\n",
+        "* El método de Newton comienza con una aproximación inicial $x_{0}$ a la raíz, a continuación se traza una recta tangente a la curva en el punto $\\left(x_{0},\\,f\\left(x_{0}\\right)\\right)$. La intersección de la recta tangente con el eje x, se denota como $x_{1}$ y se considera una mejor aproximación de la raíz.\n",
+        "\n",
+        "\n",
+        "* Después se traza otra recta tangente a la curva en el punto $\\left(x_{1},\\,f\\left(x_{1}\\right)\\right)$. La nueva intersección de la recta tangente con el eje $x$, se denota como $x_{2}$ y se considera una mejor aproximación de la raíz.\n",
+        "\n",
+        "\n",
+        "* El proceso se repite hasta que se cumplan los criterios de convergencia de las ecuaciones.\n",
+        "\n",
+        "\n",
+        "* El método de Newton, se puede aplicar para hallar raíces complejas, siempre y cuando el valor inicial $x_{0}$ sea un número complejo."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ol1Uc6ejQhes"
+      },
+      "source": [
+        "### Algoritmo\n",
+        "\n",
+        "La intersección de la recta tangente con el eje $x$ se puede calcular de la siguiente manera:\n",
+        "\n",
+        "\n",
+        "$$\\tan \\theta\t=\t\\frac{cateto \\hspace{1mm}opuesto}{cateto\\hspace{1mm}adyacente}$$\n",
+        "\n",
+        "$$\\tan \\theta=\\frac{f\\left(x_{0}\\right)}{x_{0}-x_{1}}=f^{'}(x_{0})$$\n",
+        "\n",
+        "Se iguala a la primera derivada de $x_{0}$, ya que ésta es equivalente a la pendiente :\n",
+        "\n",
+        "$$f^{'}\\left(x_{0}\\right) = \\frac{f\\left(x_{0}\\right)-0}{x_{0}-x_{1}}$$\n",
+        "\n",
+        "$$ \\Rightarrow \\frac{f\\left(x_{0}\\right)}{x_{0}-x_{1}} = f^{'}(x_{0})$$\n",
+        "\n",
+        "$$ \\left(x_{0}-x_{1}\\right)f^{'}\\left(x_{0}\\right) = f(x_{0})$$\n",
+        "\n",
+        "$$ f\\left(x_{0}\\right) = x_{0}f^{'}\\left(x_{0}\\right)-x_{1}f^{'}\\left(x_{0}\\right)$$\n",
+        "\n",
+        "$$ x_{1}f^{'}\\left(x_{0}\\right) = x_{0}f^{'}\\left(x_{0}\\right)-f\\left(x_{0}\\right)$$\n",
+        "\n",
+        "$$ x_{1} = x_{0}-\\frac{f\\left(x_{0}\\right)}{f^{'}\\left(x_{0}\\right)}$$\n",
+        "\n",
+        "**Método iterativo de Newton**\n",
+        "\n",
+        "Para obtener la n-esima intersección con el eje $x$ de la recta tangente a la curva, la ecuación sería:\n",
+        "\n",
+        "$$ x_{n}=x_{n-1}-\\frac{f\\left(x_{n-1}\\right)}{f^{'}\\left(x_{n-1}\\right)}$$\n",
+        "\n",
+        "**Pseudocódigo**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "tW9LMWrWmjMG"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/algNew.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "gEzzgezumjMH"
+      },
+      "source": [
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/master/Figuras/raicesNumericas/esqNew.PNG?raw=1\" width=\"700\">"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9OnGKC6tmjMH",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "03ab4c72-4543-494e-e42f-1befcfc37765"
+      },
+      "source": [
+        "'''Esta funcion implementa el metodo de la falsa posicion\n",
+        "para encontrar la raiz de una funcion.\n",
+        "f:   funcion de la cual se busca la raiz\n",
+        "df:  derivada de f\n",
+        "Tol: tolerancia del error numerico\n",
+        "N:   numero maximo de iteraciones\n",
+        "x0:  aproximacion inicial\n",
+        "'''\n",
+        "def newton(f,df,Tol,N,x0):\n",
+        "    #contador de iteraciones\n",
+        "    n=1\n",
+        "    #mientras no se haya superado el limite de iteraciones\n",
+        "    while n<=N:\n",
+        "        #se evalua la funcion y su derivada\n",
+        "        fx=f(x0)\n",
+        "        dfx=df(x0)\n",
+        "        #se calcula la siguiente aproximacion\n",
+        "        xn = x0-(fx/float(dfx))\n",
+        "        #en caso de cumplir criterios se devuelve la raiz\n",
+        "        if abs(f(xn)) <= Tol and abs(xn-x0) <= Tol:\n",
+        "            return xn\n",
+        "        #actualizamos las aproximaciones\n",
+        "        x0 = xn\n",
+        "        #se incrementa el contador de iteraciones    \n",
+        "        n=n+1\n",
+        "    raise Exception(\"Se alcanzo el maximo numero de iteraciones y no se encontro raiz\")\n",
+        "\n",
+        "def df(x):\n",
+        "    return 2*x\n",
+        "\n",
+        "raiz = newton(f,df,0.0001,100,2)\n",
+        "print(\"La raíz con el método de Newton es:\", raiz)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "La raíz con el método de Newton es: 1.000000000000001\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "rFrFRaI9TJWf"
+      },
+      "source": [
+        "### Ventajas y Desventajas\n",
+        "\n",
+        "**Ventajas**.\n",
+        "\n",
+        "* La rapidez de convergencia iterativa del método de Newton es mayor a cualquier método visto previamente.\n",
+        "\n",
+        "* Sirve para encontrar raíces complejas, para lo cual requiere que $x_0$ sea un número complejo $x_0 = a + bi$.\n",
+        "\n",
+        "**Desventajas**.\n",
+        "\n",
+        "* El método requiere una buena estimación inicial. De otro modo, la solución iterativa puede ser divergente o converger a una solución irrelevante.\n",
+        "\n",
+        "* La derivada $f′(x)$, no siempre es fácil de calcular."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "CQyDCHd1Bxho"
+      },
+      "source": [
+        "### Observaciones\n",
+        "\n",
+        "Ya que la naturaleza de las funciones puede ser muy variada, hay que tomer en cuenta las siguientes observaciones:\n",
+        "\n",
+        "\n",
+        "*   Si se tiene una aproximación inicial $x_0$ en un punto de inflexión, es decir $f''(x)=0$, las aproximaciones pueden oscilar de manera indefinida.\n",
+        "*   Si alguna de las aproximaxiones se encuentra cerca de un máximo o un mínimo local. Una pendiente nula provoca una división entre cero en el método (geométricamente esto significa una recta tangente que nunca se intersecta con el eje $x$).\n",
+        "*   Si se tiene varias raíces en un intervalo cercano, puede darse el caso de que una aproximación pase de la aproximación de una raíz a otra continuamente, sin lograr la convergencia.\n",
+        "\n",
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/desarrollo/Figuras/raicesNumericas/Newton1.png?raw=1\" width=\"500\">\n",
+        "\n",
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/desarrollo/Figuras/raicesNumericas/Newton2.png?raw=1\" width=\"500\">\n",
+        "\n",
+        "<img src=\"https://github.com/jugernaut/Numerico2021/blob/desarrollo/Figuras/raicesNumericas/Newton3.png?raw=1\" width=\"500\">\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "yW4lrjqMmjML"
+      },
+      "source": [
+        "## Referencias\n",
+        "\n",
+        "1.Riswan Butt:Numerical Analysys Using Matlab, Jones and Bartlett.\n",
+        "\n",
+        "2.Ward Cheney, David Kincaid: Métodos Numéricos y Computación, Cenage Learning.\n",
+        "\n",
+        "3.Richard L. Burden, J. Douglas Faires: Análisis Numérico, Math Learning."
+      ]
+    }
+  ]
+}
