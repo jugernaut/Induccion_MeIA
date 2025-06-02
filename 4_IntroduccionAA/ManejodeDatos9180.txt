@@ -1,0 +1,37 @@
+No	Apellido	Apellido 2	Nombre	Carrera	Correo	Telefono
+1	Alemán	Galicia	Diego Leónardo	C. Computación	alemanlex_plus_cool@hotmail.com	44-635-28-288
+2	Amador	Gónzalez	Noé Eusebio	Aplicadas	noe.amadorg@ciencias.unam.mx	55-640-83-871
+3	Amaro	Islas	Yamile Amalia Zulema	Actuaría	aminahelue@ciencias.unam.mx	55-4977-6159
+4	Cabrera	Pérez	Rodrígo	Actuaría	rodri030100@gmail.com	55-477-61-948
+5	Cazares	Solis	Andrea Nicole	Actuaría	nicolecazares141@gmail.com	55-539-42-382
+6	Contreras	Chávez	Citlali	Actuaría	citlali.contreras.1999@gmail.com	55-399-75-350
+7	Dorantes	Bravo	Alicia	Aplicadas	adorantes@ciencias.unam.mx	55-128-98-209
+8	Durán	Santiago	Rafael	Aplicadas	rsanti955@gmail.com	333-72-554-55
+9	Enríquez	Ríos	Michelle Guadalupe	Actuaría	michelle.0198.me@gmail.com	55-782-67-957
+10	Flores	Delgado	Omar Alejandro	Actuaría	omaralejandro00g@gmail.com	55-665-72-227
+11	Garcés	Garduño	Rodrígo Tonatihu	Actuaría	rodrigotonatihu@ciencias.unam.mx	55-244-10-361
+12	García	Azamar	Cristopher Alejandro	Actuaría	crisazami_123@ciencias.unam.mx	46-928-422-65
+13	García	Mejía	Randy Jesús	Actuaría	randy.jesus.garcia@gmail.com	55-580-24-293
+14	Gómez	Arteaga	Beu Ribe	Actuaría	beu.ribega@gmail.com	55-789-33-403
+15	Gónzalez	García	Maricela	Actuaría	marigonzalez_240100@hotmail.com	55-907-91-129
+16	Guevara	Legaspe	Leslye Joseline	Actuaría	leslye_joseline@ciencias.unam.mx	55-121-67-977
+17	Gúzman	López	Eduardo Gabriel	Aplicadas	eggl@ciencias.unam.mx	55-970-28-624
+18	Hérnandez	López	Alejandro	Actuaría	trigranalex@ciencias.unam.mx	55-161-68-809
+19	Juárez	Diosdado	Ulises	Aplicadas	ulisesu13@ciencias.unam.mx	55-497-22-370
+20	Lerdo de Tejada	Flores	Miguel	Actuaría	miguel_lerdodetejada@yahoo.com.mx	55-7190-3848
+21	Nuñez	Vega	Adive Alejandra	Actuaría	anv.ale558@gmail.com	5554-72-20-63
+22	Núñez	Sánchez	Ruben	Actuaría	rubennu00@ciencias.unam.mx	55-660-99-872
+23	Pérez	Escartin	Maya Aranzazu	Actuaría	aranzazu-08@hotmail.com	55-376-26-789
+24	Ramírez	Carmona	Axel Gabriel	Actuaría	axel.ramirez@ciencias.unam.mx	55-812-56-695
+25	Reséndiz	Guerrero	Mariella Vanesa	Actuaría	mariella_resendiz@yahoo.com	55-583-43-525
+26	Rivera	Ramírez	María Fernanda	Actuaría	fer.loveswim.0408@gmail.com	55-489-59-362
+27	Rodríguez	Hérnandez	Ricardo	Aplicadas	rimucaser@gmail.com	888-314-46-780
+28	Rodríguez	Rojas	Aarón Israel	Actuaría	aaronrojas@ciencias.unam.mx	55-931-23-412
+29	Rodríguez	Vega	Octavio	Matemáticas	octavius@ciencias.unam.mx	55-366-59-591
+30	Salas	Reyes	Sac-Nicte Damayanti	Aplicadas	nictesalas@ciencias.unam.com	55-276-13-206
+31	Salinas	Avelino	Elizabeth	Actuaría	eliza160900@ciencias.unam.mx	55-626-14-760
+32	Sánchez	Martínez	Fabiola Sofía	Actuaría	sofysm99@gmail.com	55-461-15-303
+33	Sánchez	Valle	Daniela Itzel	Actuaría	danielavalle@ciencias.unam.mx	77-174-67-488
+34	Téllez	Soto	José Emanuel	Aplicadas	joseemanueltellezsoto@gmail.com	55-93680-510
+35	Vásquez	Martínez	Andrea Lizbeth	Actuaría	andreavasquez115@gmail.com	55-687-34366
+36	Zamarripa	Ornelas	Diego Mauricio	Actuaría	diego.zamarripa18@gmail.com	55-458-69-357
