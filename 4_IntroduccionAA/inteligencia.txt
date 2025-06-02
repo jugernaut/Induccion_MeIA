@@ -1,0 +1,19 @@
+Ahora que ya conoce la definición de la IA y más de su historia, la mejor forma de profundizar en el tema es conocer las principales técnicas de la IA, específicamente, los casos en los que la Inteligencia artificial se utiliza para los negocios.
+
+Aprendizaje automático
+Generalmente, el concepto de Aprendizaje automático se confunde con el de “IA débil”. Es en este campo en donde los avances más importantes de la IA se están llevando a cabo. En términos prácticos, “el Aprendizaje automático es la ciencia que se encarga de hacer que las computadoras realicen acciones sin necesidad de programación explícita”. La idea principal aquí es que se les puede proporcionar datos a los algoritmos de Aprendizaje automático y luego usarlos para saber cómo hacer predicciones o guiar decisiones.
+
+Algunos ejemplos de algoritmos de Aprendizaje automático incluyen los siguientes: diagramas de decisiones, algoritmos de agrupamiento, algoritmos genéticos, redes Bayesianas y Aprendizaje profundo.  
+
+Aprendizaje profundo                                                                                      
+¿Recuerda cuando Google anunció un algoritmo que encontraba videos de gatos en Youtube? (Si desea refrescar su memoria haga clic aquí). Pues bien, esto es Aprendizaje profundo, una técnica de Aprendizaje automático que utiliza redes neuronales (el concepto de que las neuronas se pueden simular mediante unidades computacionales) para realizar tareas de clasificación (piense en clasificar una imagen de un gato, de un perro o personas, por ejemplo).  
+
+Algunos ejemplos de aplicaciones prácticas del Aprendizaje profundo son las siguientes: identificación de vehículos, peatones y placas de matrícula de vehículos autónomos, reconocimiento de imagen, traducción y procesamiento de lenguaje natural.  
+
+Descubrimiento de datos inteligentes
+Es el próximo paso en soluciones de IE (Inteligencia empresarial). La idea consiste en permitir la automatización total del ciclo de la IE: la incorporación y preparación de datos, el análisis predictivo y los patrones y la identificación de hipótesis. Este es un ejemplo interesante de la recuperación de datos inteligentes en acción. La información que ninguna herramienta de IE había descubierto.  
+
+Análisis predictivo
+Piense en ese momento en el que está contratando un seguro para auto y el agente le hace una serie de preguntas Estas preguntas están relacionadas a las variables que influyen en su riesgo. Detrás de estas preguntas se encuentra un modelo predictivo que informa sobre la probabilidad de que ocurra un accidente con base en su edad, código postal, género, marca de auto, etc. Es el mismo principio que se emplea en los modelos predictivos de crédito para identificar a los buenos y malos pagadores. Por lo tanto, el concepto principal de análisis predictivo (o modelado) significa que se puede utilizar un número de variables (ingresos, código postal, edad, etc.) combinadas con resultados (por ejemplo, buen o mal pagador) para generar un modelo que proporcione una puntuación (un número entre 0 y 1) que representa la probabilidad de un evento (por ejemplo, pago, migración de clientes, accidente, etc.).
+
+Los casos de uso en los negocios son amplios: modelos de crédito, modelos de segmentación de clientes (agrupamiento), modelos de probabilidad de compra y modelos de migración de clientes, entre otros. 
