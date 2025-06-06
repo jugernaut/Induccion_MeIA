@@ -101,7 +101,8 @@ class MidPointNorm(Normalize):
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import json, matplotlib
-plt.style.use('ggplot')
+#s = json.load( open("styles/bmh_matplotlibrc.json") )
+#matplotlib.rcParams.update(s)
 from IPython.core.pylabtools import figsize
 figsize(11, 5)
 colores = ["#348ABD", "#A60628","#06A628"]
@@ -217,7 +218,7 @@ def plotNetworkActivity(redHinton, iEntrada, pyTorch=False):
     topax_e.set_xlim(0, 12)
     topax_e.set_xticks(np.arange(12) + 0.5)
     topax_e.set_xticklabels(personas[12:], minor=False, ha='center')
-    ax_e.set_title("Nivel de activación de cada neurona", y = 1.75)
+    fig.suptitle("Nivel de activación de cada neurona")
 
 
     # Barra de color
@@ -244,7 +245,7 @@ def muestraPesosWa_1(redHinton, pyTorch=False):
     else:
         Wa_1 = redHinton.Wa_1
 
-    fig, axes = plt.subplots(3,2, figsize=(12,3), sharex=True)
+    fig, axes = plt.subplots(3,2, figsize=(12,3), sharex=False)
     norm = MidPointNorm(0)
     norm.autoscale(Wa_1)
 
@@ -271,22 +272,21 @@ def muestraPesosWa_1(redHinton, pyTorch=False):
 
     #labels
     for i in range(2):
-        newax = axes[0][i].twiny()
-        newax.set_xlabel('Ingleses', color='red')
-        newax.patch.set_visible(False)
-        newax.xaxis.set_ticks_position('top')
-        newax.xaxis.set_label_position('top')
-        newax.set_xticks(np.arange((len(personas) + 1)//2))
-        newax.set_xticklabels(personas[0:12], minor=False, rotation=90, ha='left')
+        axes[0][i].xaxis.set_label_position('top')
+        axes[0][i].xaxis.tick_top()
+        axes[0][i].set_xlabel('Ingleses', color='red')
+        axes[0][i].xaxis.set_ticks_position('top')
+        axes[0][i].xaxis.set_label_position('top')
+        axes[0][i].set_xticks(np.arange(len(personas)/2))
+        axes[0][i].set_xticklabels(personas[0:12], minor=False, rotation=90, ha='left')
+
+        axes[1][i].set_xticklabels([], minor=False)
 
         axes[2][i].set_xlabel('Italianos', color='red')
-    for axRow in axes:
-        axRow[0].set_xticks(np.arange(len(personas)/2))
-        axRow[0].set_xticklabels(personas[0:12], minor=False, rotation=90, ha='left')
-        axRow[1].set_xticks(np.arange(len(personas)/2))
-        axRow[1].set_xticklabels(personas[12:], minor=False, rotation=90, ha='left')
+        axes[2][i].set_xticks(np.arange(len(personas)/2))
+        axes[2][i].set_xticklabels(personas[12:], minor=False, rotation=90, ha='left')
 
-    plt.title("Pesos de $A_1$ a $B_1$\nCada caja es una neurona en $B_1$", x = 0, y = 2.7)
+    plt.title("Pesos de $A_1$ a $B_1$\nCada caja es una neurona en $B_1$", x = -20, y = 1.3)
 
 
 def muestraPesosWa_2(redHinton, pyTorch=False):
@@ -376,7 +376,7 @@ def muestraPesosWd(redHinton, pyTorch=False):
     else:
         Wd = redHinton.Wd
 
-    fig, axes = plt.subplots(3,2, figsize=(12,3), sharex=True)
+    fig, axes = plt.subplots(3,2, figsize=(12,3), sharex=False)
     norm = MidPointNorm(0)
     norm.autoscale(Wd)
 
@@ -403,22 +403,23 @@ def muestraPesosWd(redHinton, pyTorch=False):
 
     #labels
     for i in range(2):
-        newax = axes[0][i].twiny()
-        newax.set_xlabel('Ingleses', color='red')
-        newax.patch.set_visible(False)
-        newax.xaxis.set_ticks_position('top')
-        newax.xaxis.set_label_position('top')
-        newax.set_xticks(np.arange((len(personas) + 1)//2))
-        newax.set_xticklabels(personas[0:12], minor=False, rotation=90, ha='left')
+        axes[0][i].xaxis.set_label_position('top')
+        axes[0][i].xaxis.tick_top()
+        axes[0][i].set_xlabel('Ingleses', color='red')
+        axes[0][i].xaxis.set_ticks_position('top')
+        axes[0][i].xaxis.set_label_position('top')
+        axes[0][i].set_xticks(np.arange(len(personas)/2))
+        axes[0][i].set_xticklabels(personas[0:12], minor=False, rotation=90, ha='left')
+
+        axes[1][i].set_xticklabels([], minor=False)
 
         axes[2][i].set_xlabel('Italianos', color='red')
-    for axRow in axes:
-        axRow[0].set_xticks(np.arange(len(personas)/2))
-        axRow[0].set_xticklabels(personas[0:12], minor=False, rotation=90, ha='left')
-        axRow[1].set_xticks(np.arange(len(personas)/2))
-        axRow[1].set_xticklabels(personas[12:], minor=False, rotation=90, ha='left')
+        axes[2][i].set_xticks(np.arange(len(personas)/2))
+        axes[2][i].set_xticklabels(personas[12:], minor=False, rotation=90, ha='left')
 
-    plt.title("Pesos de $D$ a $E$\nCada caja es una neurona en $D$", x = 0, y = 2.7)
+    #plt.title("Pesos de $A_1$ a $B_1$\nCada caja es una neurona en $B_1$", x = -20, y = 1.3)
+
+    plt.title("Pesos de $D$ a $E$\nCada caja es una neurona en $D$", x = -20, y = 1.3)
 
 
 def muestraPesos(redHinton, pyTorch=False):
